@@ -1,0 +1,49 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>DeepSeek</title>
+    <link rel="stylesheet" href="sidepanel.css">
+  </head>
+  <body>
+    <main class="shell">
+      <header class="bar">
+        <div class="brand">
+          <img class="mark" src="../assets/icons/deepseek.svg" alt="" aria-hidden="true">
+          <span>DeepSeek</span>
+        </div>
+        <div class="actions">
+          <button id="reload" type="button" aria-label="Reload" data-tooltip="Reload">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M20 6v5h-5"></path>
+              <path d="M19 11a7 7 0 1 0-2.1 5"></path>
+            </svg>
+          </button>
+          <button id="openWindow" type="button" aria-label="Open in window" data-tooltip="Open in window">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <rect x="4" y="6" width="16" height="13" rx="1.6"></rect>
+              <path d="M4 10h16"></path>
+              <path d="M7 8h.01"></path>
+              <path d="M10 8h.01"></path>
+            </svg>
+          </button>
+          <button id="openTab" type="button" aria-label="Open in tab" data-tooltip="Open in tab">
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M7 17 17 7"></path>
+              <path d="M9 7h8v8"></path>
+            </svg>
+          </button>
+        </div>
+      </header>
+      <iframe
+        id="deepseekFrame"
+        title="DeepSeek"
+        allow="clipboard-read; clipboard-write; microphone; camera; fullscreen"
+        referrerpolicy="no-referrer-when-downgrade">
+      </iframe>
+    </main>
+    <script src="context.js"></script>
+    <script src="sidepanel.js"></script>
+  </body>
+</html>

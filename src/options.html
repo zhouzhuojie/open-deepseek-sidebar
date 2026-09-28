@@ -1,0 +1,44 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Open DeepSeek Sidebar Options</title>
+    <link rel="stylesheet" href="options.css">
+  </head>
+  <body>
+    <main class="page">
+      <header class="hero">
+        <img class="logo" src="../assets/icons/deepseek.svg" alt="" aria-hidden="true">
+        <div>
+          <h1>Open DeepSeek Sidebar</h1>
+          <p>Open DeepSeek in the side panel, a window, or a tab.</p>
+        </div>
+      </header>
+
+      <section class="panel">
+        <h2>Open DeepSeek</h2>
+        <div class="actions">
+          <button id="toggleSidePanel" type="button">Toggle side panel</button>
+          <button id="openWindow" type="button">Open in window</button>
+          <button id="openTab" type="button">Open in tab</button>
+        </div>
+      </section>
+
+      <section class="panel">
+        <div class="panel-heading">
+          <h2>Shortcuts</h2>
+          <button id="openShortcuts" class="link-button" type="button">Configure shortcuts</button>
+        </div>
+        <div id="shortcuts" class="shortcut-list"></div>
+        <p class="note">Shortcuts have to be changed on the browser's extension shortcuts page; an extension cannot set them for you.</p>
+      </section>
+
+      <section class="panel">
+        <h2>Toolbar</h2>
+        <p class="note">Left-click the toolbar icon to toggle the side panel. Right-click it for options and shortcuts.</p>
+      </section>
+    </main>
+    <script src="options.js"></script>
+  </body>
+</html>

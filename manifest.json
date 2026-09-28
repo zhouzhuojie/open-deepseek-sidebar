@@ -1,0 +1,94 @@
+{
+  "manifest_version": 3,
+  "name": "Open DeepSeek Sidebar",
+  "description": "Open the official DeepSeek chat in the browser side panel, standalone window, or tab, with one-click page context.",
+  "version": "1.0.0",
+  "permissions": [
+    "sidePanel",
+    "tabs",
+    "declarativeNetRequest",
+    "contextMenus",
+    "storage"
+  ],
+  "host_permissions": [
+    "https://chat.deepseek.com/*",
+    "https://deepseek.com/*",
+    "https://*.deepseek.com/*"
+  ],
+  "background": {
+    "service_worker": "src/background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": [
+        "https://chat.deepseek.com/*"
+      ],
+      "js": [
+        "src/deepseek-content.js"
+      ],
+      "all_frames": true,
+      "run_at": "document_start"
+    }
+  ],
+  "icons": {
+    "16": "assets/icons/icon16.png",
+    "32": "assets/icons/icon32.png",
+    "48": "assets/icons/icon48.png",
+    "128": "assets/icons/icon128.png"
+  },
+  "action": {
+    "default_title": "Open DeepSeek Sidebar",
+    "default_icon": {
+      "16": "assets/icons/icon16.png",
+      "32": "assets/icons/icon32.png",
+      "48": "assets/icons/icon48.png",
+      "128": "assets/icons/icon128.png"
+    }
+  },
+  "options_ui": {
+    "page": "src/options.html",
+    "open_in_tab": true
+  },
+  "commands": {
+    "open-deepseek-side-panel": {
+      "suggested_key": {
+        "default": "Ctrl+Q",
+        "mac": "MacCtrl+Q"
+      },
+      "description": "Toggle the side panel with this page's URL"
+    },
+    "toggle-side-panel-without-context": {
+      "suggested_key": {
+        "default": "Ctrl+Shift+Q",
+        "mac": "MacCtrl+Shift+Q"
+      },
+      "description": "Toggle the side panel without page context"
+    },
+    "open-deepseek-window": {
+      "suggested_key": {
+        "default": "Alt+Shift+D",
+        "mac": "Alt+Shift+D"
+      },
+      "description": "Open DeepSeek in a standalone window"
+    },
+    "open-deepseek-tab": {
+      "suggested_key": {
+        "default": "Alt+Shift+T",
+        "mac": "Alt+Shift+T"
+      },
+      "description": "Open DeepSeek in a tab"
+    }
+  },
+  "side_panel": {
+    "default_path": "src/sidepanel.html"
+  },
+  "declarative_net_request": {
+    "rule_resources": [
+      {
+        "enabled": true,
+        "id": "deepseek_frame_headers",
+        "path": "rules/deepseek-frame-headers.json"
+      }
+    ]
+  }
+}
