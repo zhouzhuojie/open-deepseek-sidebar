@@ -25,7 +25,6 @@ Chat assistants are most useful when they sit next to the page you're actually w
 | **One-key toggle** | `Ctrl+Q` opens *and* closes the panel. Toolbar left click does the same. |
 | **Context-aware opens** | The current tab's URL is prefilled so you can ask about the page instantly. |
 | **Context-free toggle** | `Ctrl+Shift+Q` toggles the panel with an empty composer when you just want to chat. |
-| **Extra open targets** | Send DeepSeek to a focused standalone window (`Alt+Shift+D`) or a regular tab (`Alt+Shift+T`). |
 | **Session preserved** | Login and chat history stay in the official DeepSeek session — the extension never touches them. |
 | **Cookie-banner auto-dismiss** | DeepSeek's consent banner is clicked away and hidden automatically, even inside the side-panel iframe. |
 | **Minimal permissions** | Five permissions and **zero install-time warnings** — no "read your browsing history", no "block content on any page". The iframe header rewrite is scoped to DeepSeek sub-frames. |
@@ -54,8 +53,6 @@ Chat assistants are most useful when they sit next to the page you're actually w
 | --- | --- |
 | Toggle side panel (with page URL) | `Ctrl+Q` |
 | Toggle side panel (no page context) | `Ctrl+Shift+Q` |
-| Open DeepSeek in a window | `Alt+Shift+D` |
-| Open DeepSeek in a tab | `Alt+Shift+T` |
 
 - On macOS the `Ctrl` modifier maps to `MacCtrl` to avoid clashing with the system quit shortcut.
 - Chromium only lets an extension *declare* configurable commands; set the actual keys at `chrome://extensions/shortcuts` (or `edge://extensions/shortcuts`).
@@ -126,7 +123,7 @@ The extension sends nothing to the developer or to any third party. Prefer no co
 There is no build step, no bundler, and no minification, so the code in this repository is the code that runs in your browser. Read it in this order:
 
 1. **`manifest.json`** — the complete permission surface, nothing hidden.
-2. **`src/background.js`** — the service worker. It calls `chrome.tabs.*`, `chrome.windows.*`, and `chrome.sidePanel.*`, and nothing else.
+2. **`src/background.js`** — the service worker. It calls `chrome.sidePanel.*` and `chrome.tabs.create` (only to open the shortcuts page), and nothing else.
 3. **`src/context.js`** — where the page URL is read and turned into the prompt.
 4. **`rules/deepseek-frame-headers.json`** — the header rewrite, scoped to DeepSeek sub-frames.
 

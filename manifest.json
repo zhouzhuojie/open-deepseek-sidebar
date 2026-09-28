@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Open DeepSeek Sidebar",
-  "description": "Open the official DeepSeek chat in the browser side panel, standalone window, or tab, with one-click page context.",
-  "version": "1.0.1",
+  "description": "Open the official DeepSeek chat in the browser side panel, with one-click page context.",
+  "version": "1.0.2",
   "minimum_chrome_version": "116",
   "permissions": [
     "sidePanel",
@@ -64,20 +64,6 @@
         "mac": "MacCtrl+Shift+Q"
       },
       "description": "Toggle the side panel without page context"
-    },
-    "open-deepseek-window": {
-      "suggested_key": {
-        "default": "Alt+Shift+D",
-        "mac": "Alt+Shift+D"
-      },
-      "description": "Open DeepSeek in a standalone window"
-    },
-    "open-deepseek-tab": {
-      "suggested_key": {
-        "default": "Alt+Shift+T",
-        "mac": "Alt+Shift+T"
-      },
-      "description": "Open DeepSeek in a tab"
     }
   },
   "side_panel": {

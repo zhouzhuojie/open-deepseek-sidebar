@@ -2,7 +2,7 @@
 
 Last updated: September 28, 2026
 
-Open DeepSeek Sidebar ("the extension") is a browser extension that opens the official DeepSeek chat website (`chat.deepseek.com`) in the browser's side panel, a standalone window, or a tab.
+Open DeepSeek Sidebar ("the extension") is a browser extension that opens the official DeepSeek chat website (`chat.deepseek.com`) in the browser's side panel.
 
 This policy explains exactly what the extension does and does not do with your data.
 
@@ -47,7 +47,7 @@ When you use the optional page context, the URL you are on is submitted to DeepS
 
 ## DeepSeek website access
 
-The extension loads the official DeepSeek website (`https://chat.deepseek.com/`) in the side panel, a window, or a tab. Login state, conversations, and cookies are managed by DeepSeek and your browser. The extension does not access or store them.
+The extension loads the official DeepSeek website (`https://chat.deepseek.com/`) in the side panel. Login state, conversations, and cookies are managed by DeepSeek and your browser. The extension does not access or store them.
 
 ## Permissions
 
