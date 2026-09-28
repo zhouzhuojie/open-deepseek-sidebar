@@ -19,8 +19,36 @@ test("manifest is MV3 and branded", () => {
 test("manifest uses only the minimal permissions", () => {
   assert.deepEqual(
     [...manifest.permissions].sort(),
-    ["contextMenus", "declarativeNetRequest", "sidePanel", "storage", "tabs"].sort()
+    [
+      "activeTab",
+      "contextMenus",
+      "declarativeNetRequestWithHostAccess",
+      "sidePanel",
+      "storage"
+    ].sort()
   );
+});
+
+test("manifest avoids permissions that trigger install-time warnings", () => {
+  // Chrome shows an install warning for each of these. The extension must stay
+  // warning-free so users never see "Read your browsing history" or
+  // "Block content on any page".
+  const warningPermissions = [
+    "tabs",
+    "declarativeNetRequest",
+    "history",
+    "webNavigation",
+    "sessions",
+    "topSites",
+    "favicon"
+  ];
+
+  for (const permission of manifest.permissions) {
+    assert.ok(
+      !warningPermissions.includes(permission),
+      `${permission} triggers an install-time permission warning`
+    );
+  }
 });
 
 test("manifest declares no default popup so left click can toggle", () => {
@@ -66,10 +94,7 @@ test("manifest declares the minimum Chrome version the APIs need", () => {
 });
 
 test("host permissions stay scoped to deepseek.com", () => {
-  assert.deepEqual(manifest.host_permissions, [
-    "https://deepseek.com/*",
-    "https://*.deepseek.com/*"
-  ]);
+  assert.deepEqual(manifest.host_permissions, ["https://*.deepseek.com/*"]);
 });
 
 test("the DNR rule only rewrites sub-frame headers", () => {

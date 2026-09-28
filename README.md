@@ -28,7 +28,7 @@ Chat assistants are most useful when they sit next to the page you're actually w
 | **Extra open targets** | Send DeepSeek to a focused standalone window (`Alt+Shift+D`) or a regular tab (`Alt+Shift+T`). |
 | **Session preserved** | Login and chat history stay in the official DeepSeek session — the extension never touches them. |
 | **Cookie-banner auto-dismiss** | DeepSeek's consent banner is clicked away and hidden automatically, even inside the side-panel iframe. |
-| **Minimal permissions** | Only `sidePanel`, `tabs`, `storage`, `contextMenus`, and `declarativeNetRequest` for DeepSeek domains; the iframe header rewrite is scoped to sub-frames. |
+| **Minimal permissions** | Five permissions and **zero install-time warnings** — no "read your browsing history", no "block content on any page". The iframe header rewrite is scoped to DeepSeek sub-frames. |
 | **Manifest V3** | Built on the current extension platform with a lightweight service worker. |
 
 ## Install
@@ -69,11 +69,11 @@ When opened with context, the extension builds this prompt and drops it into the
 At this page: https://example.com/article, 
 ```
 
-The trailing space is intentional — start typing your question immediately. The URL is read locally from the `tabs` permission and travels only to the DeepSeek page you opened. Use `Ctrl+Shift+Q` for a clean composer.
+The trailing space is intentional — start typing your question immediately. The URL is read locally, only at the moment you invoke the extension, and travels only to the DeepSeek page you opened. Use `Ctrl+Shift+Q` for a clean composer.
 
 ## How it works
 
-DeepSeek normally refuses to be framed. The extension ships a small `declarativeNetRequest` ruleset that strips the iframe-blocking response headers **only for DeepSeek domains**, then loads the official site inside `chrome.sidePanel`. A content script on `chat.deepseek.com` fills the composer and clears the consent banner once the app is ready.
+DeepSeek normally refuses to be framed. The extension ships a small `declarativeNetRequestWithHostAccess` ruleset that strips the iframe-blocking response headers **only for DeepSeek sub-frames**, then loads the official site inside `chrome.sidePanel`. A content script on `chat.deepseek.com` fills the composer and clears the consent banner once the app is ready.
 
 ```
 manifest.json            MV3 manifest: permissions, commands, content script, DNR rules
@@ -107,13 +107,13 @@ The entire permission surface:
 | Permission | Why it is here |
 | --- | --- |
 | `sidePanel` | Dock DeepSeek in the native side panel. |
-| `tabs` | Read the active tab's URL for page context, open DeepSeek in a tab, and open the browser's shortcuts page. |
+| `activeTab` | Read the active tab's URL, only at the moment you invoke the extension (toolbar click, shortcut, or context menu). No access to any other tab. |
 | `storage` | Hand the page URL to the side panel. Uses `storage.session` only (never written to disk). |
 | `contextMenus` | Add entries to the toolbar icon's right-click menu. |
-| `declarativeNetRequest` | Remove the iframe-blocking response headers for DeepSeek **sub-frames only**. Top-level navigation to DeepSeek is untouched. |
-| Host: `https://deepseek.com/*`, `https://*.deepseek.com/*` | Allow the panel iframe to load the official site and the content script to prefill the composer. |
+| `declarativeNetRequestWithHostAccess` | Remove the iframe-blocking response headers for DeepSeek **sub-frames only**, using the host access the extension already has. Top-level navigation to DeepSeek is untouched. |
+| Host: `https://*.deepseek.com/*` | Allow the panel iframe to load the official site. No other sites are accessed. |
 
-`tabs` is a broad permission and we would rather not need it; it is required because the URL is read *after* the side panel opens, where the narrower `activeTab` grant is no longer available. The rationale is documented next to the code in `src/context.js`.
+**There are no install-time permission warnings.** `activeTab` replaces `tabs` (which would show *"Read your browsing history"*), and `declarativeNetRequestWithHostAccess` replaces `declarativeNetRequest` (which would show *"Block content on any page"*). Because the extension is only ever invoked by a deliberate user action, `activeTab` gives the same single-URL access with none of the breadth — the rationale is documented in `src/context.js`.
 
 ### Where your data goes
 

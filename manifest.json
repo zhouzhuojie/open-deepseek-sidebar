@@ -2,17 +2,16 @@
   "manifest_version": 3,
   "name": "Open DeepSeek Sidebar",
   "description": "Open the official DeepSeek chat in the browser side panel, standalone window, or tab, with one-click page context.",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "minimum_chrome_version": "116",
   "permissions": [
     "sidePanel",
-    "tabs",
-    "declarativeNetRequest",
+    "activeTab",
+    "declarativeNetRequestWithHostAccess",
     "contextMenus",
     "storage"
   ],
   "host_permissions": [
-    "https://deepseek.com/*",
     "https://*.deepseek.com/*"
   ],
   "background": {
