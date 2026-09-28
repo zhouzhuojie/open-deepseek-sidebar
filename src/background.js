@@ -124,41 +124,89 @@ function createActionContextMenu() {
  * Side panel toggling
  * ------------------------------------------------------------------ */
 
+// Cache of windows whose side panel is open.
+//
+// `sidePanel.open()` must be called synchronously inside the user gesture, and
+// the gesture is lost across an `await`. The only "is it open" API
+// (`runtime.getContexts`) is asynchronous, so the toggle decision reads this
+// cache synchronously. The cache is not hand-maintained truth: it is hydrated
+// from `getContexts` and, where available, kept fresh by the
+// `onOpened`/`onClosed` events.
+const openPanelWindows = new Set();
+
+// Bumped whenever openPanelWindows changes locally. A hydration that began
+// before the change is discarded, so a slow getContexts cannot clobber a
+// toggle that raced it.
+let openStateVersion = 0;
+
+hydrateOpenState();
+
+chrome.sidePanel.onOpened?.addListener((info) => {
+  if (info?.windowId == null) return;
+  openStateVersion++;
+  openPanelWindows.add(info.windowId);
+});
+
+chrome.sidePanel.onClosed?.addListener((info) => {
+  if (info?.windowId == null) return;
+  openStateVersion++;
+  openPanelWindows.delete(info.windowId);
+});
+
+async function hydrateOpenState() {
+  const version = openStateVersion;
+  try {
+    const contexts = await chrome.runtime.getContexts({
+      contextTypes: ["SIDE_PANEL"]
+    });
+    if (version !== openStateVersion) return;
+    openPanelWindows.clear();
+    for (const context of contexts) {
+      if (context.windowId != null) openPanelWindows.add(context.windowId);
+    }
+  } catch {
+    // No getContexts (or it failed): rely on the optimistic updates instead.
+  }
+}
+
 /**
  * Toggle the side panel for the tab's window. `withContext` controls whether
  * the current page's URL is prefilled into DeepSeek when opening it.
- *
- * Open state comes from `chrome.runtime.getContexts` (Chrome 116+) instead of
- * hand-tracked state, so it stays correct across service worker restarts.
  */
-async function toggleSidePanel(tab, withContext) {
+function toggleSidePanel(tab, withContext) {
   if (typeof chrome.sidePanel?.open !== "function") return;
 
-  const windowId = tab?.windowId ?? (await resolveSidePanelWindowId());
-  if (!windowId) return;
-
-  if (await isSidePanelOpen(windowId)) {
-    await closeSidePanel(windowId);
+  const windowId = tab?.windowId;
+  if (windowId != null) {
+    applyToggle(windowId, withContext);
     return;
   }
 
-  // Open before doing any further async work so the user gesture is intact,
-  // then hand the panel its context.
-  const opening = chrome.sidePanel.open({ windowId });
-  attachSidePanelContext(windowId, withContext);
-  await opening.catch(() => {});
+  // No window id on the event: resolve one first, then act.
+  resolveSidePanelWindowId().then((resolved) => {
+    if (resolved != null) applyToggle(resolved, withContext);
+  });
 }
 
-async function isSidePanelOpen(windowId) {
-  try {
-    const contexts = await chrome.runtime.getContexts({
-      contextTypes: ["SIDE_PANEL"],
-      windowIds: [windowId]
-    });
-    return contexts.length > 0;
-  } catch {
-    return false;
+function applyToggle(windowId, withContext) {
+  if (openPanelWindows.has(windowId)) {
+    openStateVersion++;
+    openPanelWindows.delete(windowId);
+    closeSidePanel(windowId);
+    return;
   }
+
+  // Must stay synchronous with the user gesture: do not `await` before this.
+  openStateVersion++;
+  openPanelWindows.add(windowId);
+  chrome.sidePanel.open({ windowId }).catch(() => {
+    // The open failed; drop the optimistic entry and re-read the real state.
+    openStateVersion++;
+    openPanelWindows.delete(windowId);
+    hydrateOpenState();
+  });
+
+  attachSidePanelContext(windowId, withContext);
 }
 
 async function closeSidePanel(windowId) {

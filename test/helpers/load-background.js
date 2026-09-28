@@ -54,7 +54,9 @@ function createChromeMock({
     message: createEvent(),
     actionClicked: createEvent(),
     command: createEvent(),
-    contextMenuClicked: createEvent()
+    contextMenuClicked: createEvent(),
+    sidePanelOpened: createEvent(),
+    sidePanelClosed: createEvent()
   };
 
   const chrome = {
@@ -91,6 +93,8 @@ function createChromeMock({
       }
     },
     sidePanel: {
+      onOpened: events.sidePanelOpened,
+      onClosed: events.sidePanelClosed,
       setPanelBehavior: async (options) => {
         calls.setPanelBehavior.push(options);
       },
