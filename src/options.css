@@ -107,42 +107,6 @@ button:hover {
   gap: 8px;
 }
 
-.radio-list {
-  display: grid;
-  gap: 8px;
-}
-
-.radio-row {
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr);
-  gap: 10px;
-  align-items: start;
-  border: 1px solid #eef1f5;
-  border-radius: 7px;
-  padding: 10px;
-  background: #fbfcfe;
-  cursor: pointer;
-}
-
-.radio-row input {
-  margin-top: 2px;
-}
-
-.radio-row span {
-  display: grid;
-  gap: 3px;
-}
-
-.radio-row strong {
-  font-size: 13px;
-}
-
-.radio-row small {
-  color: #697386;
-  font-size: 12px;
-  line-height: 1.4;
-}
-
 .shortcut-row {
   min-height: 38px;
   border: 1px solid #eef1f5;
@@ -198,15 +162,6 @@ kbd {
   .shortcut-row {
     border-color: #293244;
     background: #111827;
-  }
-
-  .radio-row {
-    border-color: #293244;
-    background: #111827;
-  }
-
-  .radio-row small {
-    color: #9aa8bd;
   }
 
   kbd {

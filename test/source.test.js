@@ -24,12 +24,23 @@ function walk(dir, files = []) {
 }
 
 const files = walk(ROOT);
+const fileSet = new Set(
+  files.map((file) => path.relative(ROOT, file).split(path.sep).join("/"))
+);
 const read = (file) => fs.readFileSync(path.join(ROOT, file), "utf8");
 
 test("source files are present", () => {
   assert.ok(files.length > 0);
-  assert.ok(files.some((file) => file.endsWith("manifest.json")));
-  assert.ok(files.some((file) => file.endsWith("background.js")));
+  for (const file of [
+    "manifest.json",
+    "src/protocol.js",
+    "src/context.js",
+    "src/background.js",
+    "src/deepseek-consent.js",
+    "src/deepseek-prefill.js"
+  ]) {
+    assert.ok(fileSet.has(file), `missing ${file}`);
+  }
 });
 
 test("no CJK characters anywhere in the source", () => {
@@ -50,9 +61,10 @@ test("the old project name is gone", () => {
   }
 });
 
-test("the removed popup stays removed", () => {
-  assert.ok(!fs.existsSync(path.join(ROOT, "src", "popup.html")));
-  assert.ok(!fs.existsSync(path.join(ROOT, "src", "popup.js")));
+test("the removed popup and monolith content script stay removed", () => {
+  for (const file of ["src/popup.html", "src/popup.js", "src/deepseek-content.js"]) {
+    assert.ok(!fs.existsSync(path.join(ROOT, file)), `${file} should be gone`);
+  }
 });
 
 test("the side panel no longer renders a context bar", () => {
@@ -61,15 +73,32 @@ test("the side panel no longer renders a context bar", () => {
   assert.ok(!html.includes("context-bar"));
 });
 
-test("context building and prefill share the same prompt parameter", () => {
-  const context = read("src/context.js");
-  const content = read("src/deepseek-content.js");
-  assert.ok(context.includes('PROMPT_PARAM = "q"'));
-  assert.ok(content.includes('PROMPT_PARAM = "q"'));
+test("the prefill script reuses the protocol prompt parameter", () => {
+  const prefill = read("src/deepseek-prefill.js");
+  assert.ok(prefill.includes("DeepSeekProtocol"));
+  assert.ok(
+    !prefill.includes('PROMPT_PARAM = "q"'),
+    "prefill should not redeclare the prompt parameter"
+  );
 });
 
-test("the background exposes both sidebar toggle commands", () => {
+test("message types come from the protocol module, not raw literals", () => {
+  for (const file of ["src/background.js", "src/sidepanel.js", "src/options.js"]) {
+    const text = read(file);
+    assert.ok(text.includes("MESSAGES"), `${file} should use MESSAGES`);
+    assert.ok(
+      !/"SIDE_PANEL_CONTEXT"|"CLOSE_SIDE_PANEL"|"TOGGLE_SIDE_PANEL"/.test(text),
+      `${file} should not inline message type literals`
+    );
+  }
+});
+
+test("panel open state comes from getContexts, not a tracked port", () => {
   const background = read("src/background.js");
-  assert.ok(background.includes('"open-deepseek-side-panel"'));
-  assert.ok(background.includes('"toggle-side-panel-without-context"'));
+  assert.ok(background.includes("getContexts"));
+  assert.ok(!background.includes("onConnect"));
+  assert.ok(!background.includes("SIDE_PANEL_HELLO"));
+
+  const sidepanel = read("src/sidepanel.js");
+  assert.ok(!sidepanel.includes("runtime.connect"));
 });

@@ -3,7 +3,7 @@
 > Put DeepSeek one click away. A fast, privacy-friendly Chromium extension that opens the official DeepSeek chat in a native browser side panel — with the page you're reading automatically attached.
 
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
-[![Chrome](https://img.shields.io/badge/Chrome-114%2B-4285F4)](https://developer.chrome.com/docs/extensions/reference/api/sidePanel)
+[![Chrome](https://img.shields.io/badge/Chrome-116%2B-4285F4)](https://developer.chrome.com/docs/extensions/reference/api/sidePanel)
 [![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-coming%20soon-lightgrey)](https://chromewebstore.google.com/detail/CHROME_WEB_STORE_ID)
 
 ---
@@ -27,7 +27,7 @@ Chat assistants are most useful when they sit next to the page you're actually w
 | **Extra open targets** | Send DeepSeek to a focused standalone window (`Alt+Shift+D`) or a regular tab (`Alt+Shift+T`). |
 | **Session preserved** | Login and chat history stay in the official DeepSeek session — the extension never touches them. |
 | **Cookie-banner auto-dismiss** | DeepSeek's consent banner is clicked away and hidden automatically, even inside the side-panel iframe. |
-| **Minimal permissions** | Only `sidePanel`, `tabs`, `storage`, `contextMenus`, and `declarativeNetRequest` for DeepSeek domains. |
+| **Minimal permissions** | Only `sidePanel`, `tabs`, `storage`, `contextMenus`, and `declarativeNetRequest` for DeepSeek domains; the iframe header rewrite is scoped to sub-frames. |
 | **Manifest V3** | Built on the current extension platform with a lightweight service worker. |
 
 ## Install
@@ -76,10 +76,12 @@ DeepSeek normally refuses to be framed. The extension ships a small `declarative
 
 ```
 manifest.json            MV3 manifest: permissions, commands, content script, DNR rules
-rules/                   declarativeNetRequest ruleset (DeepSeek-only header rewrite)
-src/background.js        Service worker: toggling, commands, context, menus
+rules/                   declarativeNetRequest ruleset (DeepSeek-only sub-frame header rewrite)
+src/protocol.js          Shared constants: prompt param, message types, command ids
 src/context.js           Shared helpers: capture active tab URL, build prompt/URL
-src/deepseek-content.js  Content script: composer prefill + cookie-banner dismissal
+src/background.js        Service worker: toggling, commands, context, menus
+src/deepseek-consent.js  Content script: cookie/consent banner dismissal
+src/deepseek-prefill.js  Content script: composer prefill
 src/sidepanel.*          Side panel shell that hosts the DeepSeek iframe
 src/options.*            Options / help page
 ```

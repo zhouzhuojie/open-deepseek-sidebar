@@ -1,40 +1,57 @@
-const COMMAND_LABELS = {
-  "open-deepseek-side-panel": "Toggle side panel (with page URL)",
-  "toggle-side-panel-without-context": "Toggle side panel (no page context)",
-  "open-deepseek-window": "Open DeepSeek in a window",
-  "open-deepseek-tab": "Open DeepSeek in a tab"
-};
+const { MESSAGES, COMMANDS } = globalThis.DeepSeekProtocol;
+
+// Order the rows are rendered in; labels come from the manifest via
+// chrome.commands.getAll() so there is only one source of truth.
+const COMMAND_ORDER = [
+  COMMANDS.TOGGLE_WITH_CONTEXT,
+  COMMANDS.TOGGLE_WITHOUT_CONTEXT,
+  COMMANDS.OPEN_WINDOW,
+  COMMANDS.OPEN_TAB
+];
 
 document.getElementById("toggleSidePanel").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ type: "TOGGLE_SIDE_PANEL", withContext: true });
+  chrome.runtime.sendMessage({
+    type: MESSAGES.TOGGLE_SIDE_PANEL,
+    withContext: true
+  });
 });
 
 document.getElementById("openWindow").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ type: "OPEN_DEEPSEEK_WINDOW", withContext: true });
+  chrome.runtime.sendMessage({
+    type: MESSAGES.OPEN_DEEPSEEK_WINDOW,
+    withContext: true
+  });
 });
 
 document.getElementById("openTab").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ type: "OPEN_DEEPSEEK_TAB", withContext: true });
+  chrome.runtime.sendMessage({
+    type: MESSAGES.OPEN_DEEPSEEK_TAB,
+    withContext: true
+  });
 });
 
 document.getElementById("openShortcuts").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ type: "OPEN_SHORTCUTS_PAGE" });
+  chrome.runtime.sendMessage({ type: MESSAGES.OPEN_SHORTCUTS_PAGE });
 });
 
-loadShortcuts();
+loadShortcuts().catch(() => {});
 
 async function loadShortcuts() {
   const commands = await chrome.commands.getAll();
+  const byName = new Map(commands.map((command) => [command.name, command]));
+
   const list = document.getElementById("shortcuts");
   list.replaceChildren();
 
-  for (const command of commands) {
-    if (!COMMAND_LABELS[command.name]) continue;
+  for (const name of COMMAND_ORDER) {
+    const command = byName.get(name);
+    if (!command) continue;
+
     const row = document.createElement("div");
     row.className = "shortcut-row";
 
     const label = document.createElement("span");
-    label.textContent = COMMAND_LABELS[command.name];
+    label.textContent = command.description || name;
 
     const shortcut = document.createElement("kbd");
     shortcut.textContent = normalizeShortcut(command.shortcut || "Not set");
