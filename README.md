@@ -8,6 +8,8 @@
 [![Privacy: no tracking](https://img.shields.io/badge/privacy-no%20tracking%2C%20no%20backend-2ea44f)](PRIVACY_POLICY.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
+![Open DeepSeek Sidebar in action: a GitHub page on the left, with the DeepSeek side panel answering a question about it on the right.](assets/screenshots/side-panel.png)
+
 ---
 
 ## Why Open DeepSeek Sidebar?
