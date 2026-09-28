@@ -6,6 +6,7 @@
 [![Chrome](https://img.shields.io/badge/Chrome-116%2B-4285F4)](https://developer.chrome.com/docs/extensions/reference/api/sidePanel)
 [![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-coming%20soon-lightgrey)](https://chromewebstore.google.com/detail/CHROME_WEB_STORE_ID)
 [![Privacy: no tracking](https://img.shields.io/badge/privacy-no%20tracking%2C%20no%20backend-2ea44f)](PRIVACY_POLICY.md)
+[![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
 ---
 
@@ -142,7 +143,7 @@ This project is a fork of [**whKoda/DeepSeekQuckOpen**](https://github.com/whKod
 
 This fork focuses on a cleaner, more opinionated experience: a true toggle, URL page context on open, a simplified single-purpose configuration, English-only UI, and refreshed branding.
 
-The upstream project does not declare a license, so no license is asserted here for the combined work.
+The upstream project does not declare a license, so the MIT license below covers this fork's code and contributions. Credit for the original work remains with the upstream author; if you plan to reuse upstream-derived code, check the upstream repository first.
 
 ## Development
 
@@ -155,3 +156,7 @@ npm test
 ```
 
 The tests cover the shared context/prompt helpers, the manifest contract, and source hygiene (no CJK, no stale branding, no removed popup).
+
+## License
+
+[MIT](LICENSE) © 2026 Rex Zhou.
