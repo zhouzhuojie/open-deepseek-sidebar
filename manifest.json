@@ -3,6 +3,7 @@
   "name": "Open DeepSeek Sidebar",
   "description": "Open the official DeepSeek chat in the browser side panel, standalone window, or tab, with one-click page context.",
   "version": "1.0.0",
+  "minimum_chrome_version": "116",
   "permissions": [
     "sidePanel",
     "tabs",
@@ -11,7 +12,6 @@
     "storage"
   ],
   "host_permissions": [
-    "https://chat.deepseek.com/*",
     "https://deepseek.com/*",
     "https://*.deepseek.com/*"
   ],
@@ -24,7 +24,9 @@
         "https://chat.deepseek.com/*"
       ],
       "js": [
-        "src/deepseek-content.js"
+        "src/protocol.js",
+        "src/deepseek-consent.js",
+        "src/deepseek-prefill.js"
       ],
       "all_frames": true,
       "run_at": "document_start"

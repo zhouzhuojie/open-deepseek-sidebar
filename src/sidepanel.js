@@ -1,11 +1,11 @@
 const { DEEPSEEK_URL, buildDeepSeekUrl, consumeSidePanelContext } =
   globalThis.DeepSeekContext;
+const { MESSAGES } = globalThis.DeepSeekProtocol;
 
 const frame = document.getElementById("deepseekFrame");
 
 let currentWindowId = null;
 let lastPrompt = "";
-let sidePanelPort = null;
 
 init();
 
@@ -21,36 +21,18 @@ async function init() {
     currentWindowId = null;
   }
 
-  connectSidePanelPort();
-
   applyPrompt(stored?.prompt || "");
 }
 
-// Keeps the background's open/closed state accurate so the toolbar button and
-// the keyboard shortcuts can toggle the panel. The port disconnects when the
-// panel closes (or when the service worker is recycled).
-function connectSidePanelPort() {
-  if (currentWindowId == null) return;
-  try {
-    sidePanelPort = chrome.runtime.connect({ name: "sidepanel" });
-    sidePanelPort.postMessage({
-      type: "SIDE_PANEL_HELLO",
-      windowId: currentWindowId
-    });
-  } catch {
-    // Ignore; toggling then relies on the optimistic open/close state.
-  }
-}
-
 chrome.runtime.onMessage.addListener((message) => {
-  if (message?.type === "CLOSE_SIDE_PANEL") {
+  if (message?.type === MESSAGES.CLOSE_SIDE_PANEL) {
     if (currentWindowId == null || message.windowId === currentWindowId) {
       window.close();
     }
     return false;
   }
 
-  if (message?.type !== "SIDE_PANEL_CONTEXT") return false;
+  if (message?.type !== MESSAGES.SIDE_PANEL_CONTEXT) return false;
 
   if (
     currentWindowId != null &&
@@ -67,24 +49,35 @@ chrome.runtime.onMessage.addListener((message) => {
 });
 
 document.getElementById("reload").addEventListener("click", () => {
-  frame.src = lastPrompt ? buildDeepSeekUrl(lastPrompt) : DEEPSEEK_URL;
+  // Force, even when the URL is unchanged.
+  applyPrompt(lastPrompt, { force: true });
 });
 
 document.getElementById("openWindow").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ type: "OPEN_DEEPSEEK_WINDOW", withContext: true });
+  chrome.runtime.sendMessage({
+    type: MESSAGES.OPEN_DEEPSEEK_WINDOW,
+    withContext: true
+  });
 });
 
 document.getElementById("openTab").addEventListener("click", () => {
-  chrome.runtime.sendMessage({ type: "OPEN_DEEPSEEK_TAB", withContext: true });
+  chrome.runtime.sendMessage({
+    type: MESSAGES.OPEN_DEEPSEEK_TAB,
+    withContext: true
+  });
 });
 
-function applyPrompt(prompt) {
-  // Do not trim: the prompt intentionally ends with a space.
-  if (prompt && prompt.trim()) {
-    lastPrompt = prompt;
-    frame.src = buildDeepSeekUrl(prompt);
-  } else {
-    lastPrompt = "";
-    frame.src = DEEPSEEK_URL;
-  }
+/**
+ * Point the iframe at DeepSeek with the given prompt. Idempotent so that the
+ * stored context and an in-flight SIDE_PANEL_CONTEXT message cannot trigger a
+ * double navigation.
+ */
+function applyPrompt(prompt, { force = false } = {}) {
+  // Do not trim the prompt itself: it intentionally ends with a space.
+  const hasPrompt = Boolean(prompt && prompt.trim());
+  lastPrompt = hasPrompt ? prompt : "";
+
+  const next = hasPrompt ? buildDeepSeekUrl(prompt) : DEEPSEEK_URL;
+  if (!force && frame.src === next) return;
+  frame.src = next;
 }

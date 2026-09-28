@@ -19,7 +19,7 @@ The extension does not collect:
 
 ## Page Context (optional)
 
-To prefill DeepSeek with context from the tab you opened it from, the extension reads the active tab's URL at the moment you trigger an open action. Only the URL is used to build the prompt `At this page: <page_url>, ` that is placed into the DeepSeek page you opened. It is kept in local extension storage (or in the page URL) just long enough to reach the DeepSeek input box and is not sent anywhere else. You can open DeepSeek without context using the dedicated shortcut.
+To prefill DeepSeek with context from the tab you opened it from, the extension reads the active tab's URL at the moment you trigger an open action. Only the URL is used to build the prompt `At this page: <page_url>, ` that is placed into the DeepSeek page you opened. It is kept briefly in in-memory session storage (or in the page URL) just long enough to reach the DeepSeek input box and is not sent anywhere else. You can open DeepSeek without context using the dedicated shortcut.
 
 ## DeepSeek Website Access
 
@@ -33,7 +33,7 @@ The extension uses the following browser permissions:
 
 - `sidePanel`: to open and close DeepSeek in the browser side panel.
 - `tabs`: to read the active tab's URL for context, to open DeepSeek in a browser tab, and to open the browser shortcut settings page.
-- `declarativeNetRequest`: to modify response headers only for DeepSeek domains so the official DeepSeek website can be displayed inside the side panel iframe.
+- `declarativeNetRequest`: to modify response headers for DeepSeek sub-frames only, so the official DeepSeek website can be displayed inside the side panel iframe. Top-level navigations to DeepSeek are left untouched.
 - `contextMenus`: to add entries to the toolbar icon's right-click menu.
 - `storage`: to pass the page URL to the side panel.
 - Host permissions for DeepSeek domains: to allow the side panel iframe to load the official DeepSeek website and to prefill the DeepSeek composer.

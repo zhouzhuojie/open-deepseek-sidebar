@@ -49,11 +49,42 @@ test("manifest uses Ctrl+Q / Ctrl+Shift+Q defaults for the toggles", () => {
   );
 });
 
-test("content script targets chat.deepseek.com in all frames", () => {
+test("content scripts load protocol first, then consent and prefill", () => {
   const [script] = manifest.content_scripts;
   assert.deepEqual(script.matches, ["https://chat.deepseek.com/*"]);
   assert.equal(script.all_frames, true);
   assert.equal(script.run_at, "document_start");
+  assert.deepEqual(script.js, [
+    "src/protocol.js",
+    "src/deepseek-consent.js",
+    "src/deepseek-prefill.js"
+  ]);
+});
+
+test("manifest declares the minimum Chrome version the APIs need", () => {
+  assert.equal(manifest.minimum_chrome_version, "116");
+});
+
+test("host permissions stay scoped to deepseek.com", () => {
+  assert.deepEqual(manifest.host_permissions, [
+    "https://deepseek.com/*",
+    "https://*.deepseek.com/*"
+  ]);
+});
+
+test("the DNR rule only rewrites sub-frame headers", () => {
+  const rules = JSON.parse(
+    fs.readFileSync(
+      path.join(ROOT, "rules", "deepseek-frame-headers.json"),
+      "utf8"
+    )
+  );
+
+  assert.deepEqual(rules[0].condition.resourceTypes, ["sub_frame"]);
+  assert.deepEqual(
+    rules[0].action.responseHeaders.map((header) => header.header).sort(),
+    ["content-security-policy", "x-frame-options"]
+  );
 });
 
 test("every file referenced by the manifest exists", () => {

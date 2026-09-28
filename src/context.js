@@ -8,12 +8,13 @@
 (function (global) {
   "use strict";
 
+  const { PROMPT_PARAM } = global.DeepSeekProtocol;
+
   // Bare URL keeps the plain "just open DeepSeek" behaviour.
   const DEEPSEEK_URL = "https://chat.deepseek.com/";
   // New-chat route: DeepSeek keeps unknown query params here, which lets the
   // content script read the prefilled prompt back.
   const DEEPSEEK_CHAT_URL = "https://chat.deepseek.com/a/chat";
-  const PROMPT_PARAM = "q";
   const MAX_PROMPT_LENGTH = 6000;
 
   function isCapturableUrl(url) {
@@ -23,6 +24,10 @@
   /**
    * Context of the active tab in the given window (or the current window).
    * Never throws: returns null when the tab has no usable URL.
+   *
+   * Note: the query runs after the side panel has opened, so the extension
+   * relies on the broad `tabs` permission for `tab.url`; `activeTab` is not
+   * reliably granted at that point.
    */
   async function captureActiveTabContext(windowId) {
     let tab;
@@ -68,7 +73,7 @@
   }
 
   function sessionArea() {
-    return chrome.storage.session || chrome.storage.local;
+    return chrome.storage.session;
   }
 
   function sidePanelContextKey(windowId) {

@@ -18,7 +18,6 @@
     "condition": {
       "urlFilter": "||deepseek.com/",
       "resourceTypes": [
-        "main_frame",
         "sub_frame"
       ]
     }

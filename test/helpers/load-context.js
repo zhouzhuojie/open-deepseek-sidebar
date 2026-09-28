@@ -4,7 +4,9 @@ const fs = require("node:fs");
 const path = require("node:path");
 const vm = require("node:vm");
 
-const CONTEXT_PATH = path.join(__dirname, "..", "..", "src", "context.js");
+const SRC = path.join(__dirname, "..", "..", "src");
+const PROTOCOL_PATH = path.join(SRC, "protocol.js");
+const CONTEXT_PATH = path.join(SRC, "context.js");
 
 /**
  * Minimal `chrome` mock covering what src/context.js uses.
@@ -35,11 +37,10 @@ function createChromeMock({ tabs = [], storage = {} } = {}) {
 }
 
 /**
- * Load src/context.js (an IIFE that assigns `globalThis.DeepSeekContext`) in
- * an isolated VM context so each test starts clean.
+ * Load src/protocol.js then src/context.js (both IIFEs that assign to
+ * `globalThis`) in an isolated VM context so each test starts clean.
  */
 function loadContext({ chrome } = {}) {
-  const code = fs.readFileSync(CONTEXT_PATH, "utf8");
   const sandbox = {
     chrome: chrome || createChromeMock(),
     URL,
@@ -50,8 +51,18 @@ function loadContext({ chrome } = {}) {
   };
   sandbox.globalThis = sandbox;
   vm.createContext(sandbox);
-  vm.runInContext(code, sandbox);
-  return { api: sandbox.DeepSeekContext, sandbox };
+
+  for (const file of [PROTOCOL_PATH, CONTEXT_PATH]) {
+    vm.runInContext(fs.readFileSync(file, "utf8"), sandbox, {
+      filename: path.basename(file)
+    });
+  }
+
+  return {
+    api: sandbox.DeepSeekContext,
+    protocol: sandbox.DeepSeekProtocol,
+    sandbox
+  };
 }
 
-module.exports = { loadContext, createChromeMock, CONTEXT_PATH };
+module.exports = { loadContext, createChromeMock, CONTEXT_PATH, PROTOCOL_PATH };
