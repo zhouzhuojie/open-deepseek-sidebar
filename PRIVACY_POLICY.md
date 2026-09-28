@@ -1,51 +1,81 @@
 # Open DeepSeek Sidebar Privacy Policy
 
-Last updated: July 2, 2026
+Last updated: September 28, 2026
 
-Open DeepSeek Sidebar is a browser extension that helps users open the official DeepSeek website in a browser side panel, standalone window, or browser tab.
+Open DeepSeek Sidebar ("the extension") is a browser extension that opens the official DeepSeek chat website (`chat.deepseek.com`) in the browser's side panel, a standalone window, or a tab.
 
-## Data Collection
+This policy explains exactly what the extension does and does not do with your data.
 
-Open DeepSeek Sidebar does not collect, store, sell, transmit, or share any personal data.
+## Summary
 
-The extension does not collect:
+- The extension has **no backend**. There is no developer-operated server, and the extension makes no network requests of its own.
+- The extension does **not collect or store** your data, and sends **nothing** to the developer.
+- The only thing that ever leaves your browser is the page URL you choose to attach as context, and it goes only to the **DeepSeek page you opened**, exactly as if you had pasted the link yourself.
+- All of the code is open source and auditable: https://github.com/zhouzhuojie/open-deepseek-sidebar
 
-- Personal information
-- Chat content
-- DeepSeek account information
-- API keys
-- Browsing history
-- Authentication credentials
+## What the extension reads
 
-## Page Context (optional)
+### Page context (optional)
 
-To prefill DeepSeek with context from the tab you opened it from, the extension reads the active tab's URL at the moment you trigger an open action. Only the URL is used to build the prompt `At this page: <page_url>, ` that is placed into the DeepSeek page you opened. It is kept briefly in in-memory session storage (or in the page URL) just long enough to reach the DeepSeek input box and is not sent anywhere else. You can open DeepSeek without context using the dedicated shortcut.
+When you open DeepSeek **with page context** (for example with `Ctrl+Q` or a toolbar click), the extension reads the URL of the active tab at that moment and builds this prompt:
 
-## DeepSeek Website Access
+```
+At this page: <page_url>, 
+```
 
-The extension opens the official DeepSeek website at `https://chat.deepseek.com/`.
+The prompt is placed into the DeepSeek composer of the page that was just opened, where you can edit or delete it before sending. That is the only use of the URL.
 
-Login status, conversations, cookies, and account data are managed by DeepSeek and the browser. Open DeepSeek Sidebar does not access or store this information.
+This is the only browsing-related data the extension touches. It is not stored persistently: it passes briefly through `chrome.storage.session` (in-memory storage that is cleared when the browser closes) or through the page URL, and is removed as soon as the prompt is applied.
+
+If you want no page context at all, use the context-free shortcut (`Ctrl+Shift+Q`), which opens DeepSeek with an empty composer.
+
+### What the extension does not read
+
+The extension does not read, collect, or store:
+
+- Page content or page text
+- Form fields, keystrokes, or passwords
+- Cookies
+- Your browsing history beyond the single active tab URL described above
+- DeepSeek account information, conversations, or API keys
+
+## Where your data goes
+
+The extension itself sends nothing to the developer and has no server.
+
+When you use the optional page context, the URL you are on is submitted to DeepSeek as part of the chat prompt, because it is typed into the DeepSeek page you opened. That request goes to `chat.deepseek.com` and is governed by DeepSeek's own privacy policy. If you would rather not send it, use the context-free shortcut.
+
+## DeepSeek website access
+
+The extension loads the official DeepSeek website (`https://chat.deepseek.com/`) in the side panel, a window, or a tab. Login state, conversations, and cookies are managed by DeepSeek and your browser. The extension does not access or store them.
 
 ## Permissions
 
 The extension uses the following browser permissions:
 
-- `sidePanel`: to open and close DeepSeek in the browser side panel.
-- `tabs`: to read the active tab's URL for context, to open DeepSeek in a browser tab, and to open the browser shortcut settings page.
+- `sidePanel`: to display the official DeepSeek website in the browser side panel.
+- `tabs`: to read the active tab's URL for page context, to open DeepSeek in a browser tab, and to open the browser's keyboard-shortcut settings page.
+- `storage`: to pass the page URL to the side panel using in-memory session storage only.
+- `contextMenus`: to add entries to the extension's own toolbar-icon right-click menu.
 - `declarativeNetRequest`: to modify response headers for DeepSeek sub-frames only, so the official DeepSeek website can be displayed inside the side panel iframe. Top-level navigations to DeepSeek are left untouched.
-- `contextMenus`: to add entries to the toolbar icon's right-click menu.
-- `storage`: to pass the page URL to the side panel.
-- Host permissions for DeepSeek domains: to allow the side panel iframe to load the official DeepSeek website and to prefill the DeepSeek composer.
+- Host permissions for DeepSeek domains (`https://deepseek.com/*`, `https://*.deepseek.com/*`): to allow the side panel iframe to load the official DeepSeek website and to prefill the DeepSeek composer. No other websites are accessed.
 
-## Remote Code
+## Remote code
 
-Open DeepSeek Sidebar does not execute remotely hosted extension code. It only loads the official DeepSeek website as web content.
+The extension does not execute remotely hosted extension code. All JavaScript, CSS, and HTML is included in the extension package. The official DeepSeek website is loaded as ordinary web content in an iframe, not as extension code.
 
-## Data Sharing
+## Data retention
 
-Open DeepSeek Sidebar does not share any user data with the developer or third parties.
+The extension retains no user data. The page-context value lives only in memory for a few seconds while the side panel loads, and is then removed.
+
+## Data sharing
+
+The extension does not sell, rent, or share your data with the developer or with any third party. The only data transfer is the page URL you choose to attach, sent to the DeepSeek website you opened.
+
+## Changes to this policy
+
+If this policy changes, the updated version will be published at this URL with a new "Last updated" date.
 
 ## Contact
 
-For privacy questions, contact the extension developer using the support email listed in the browser extension store.
+Questions or concerns: open an issue at https://github.com/zhouzhuojie/open-deepseek-sidebar/issues or use the developer contact address shown on the Chrome Web Store listing.
