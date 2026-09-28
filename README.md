@@ -4,6 +4,7 @@
 
 [![Manifest V3](https://img.shields.io/badge/Manifest-V3-blue)](https://developer.chrome.com/docs/extensions/develop/migrate/what-is-mv3)
 [![Chrome](https://img.shields.io/badge/Chrome-114%2B-4285F4)](https://developer.chrome.com/docs/extensions/reference/api/sidePanel)
+[![Chrome Web Store](https://img.shields.io/badge/Chrome%20Web%20Store-coming%20soon-lightgrey)](https://chromewebstore.google.com/detail/CHROME_WEB_STORE_ID)
 
 ---
 
@@ -30,6 +31,14 @@ Chat assistants are most useful when they sit next to the page you're actually w
 | **Manifest V3** | Built on the current extension platform with a lightweight service worker. |
 
 ## Install
+
+### From the Chrome Web Store
+
+> **Coming soon.** The listing is not live yet — the placeholder link is
+> `https://chromewebstore.google.com/detail/open-deepseek-sidebar/CHROME_WEB_STORE_ID`
+> (replace `CHROME_WEB_STORE_ID` after publishing the store listing).
+
+### From source (developer mode)
 
 1. Open the extension management page:
    - Chrome: `chrome://extensions/`
@@ -89,4 +98,12 @@ The upstream project does not declare a license, so no license is asserted here 
 
 ## Development
 
-No build step. Edit the files and hit **Reload** in `chrome://extensions/`.
+No build step and no runtime dependencies. Edit the files and hit **Reload** in `chrome://extensions/`.
+
+Run the test suite with Node's built-in test runner (Node 20+):
+
+```bash
+npm test
+```
+
+The tests cover the shared context/prompt helpers, the manifest contract, and source hygiene (no CJK, no stale branding, no removed popup).

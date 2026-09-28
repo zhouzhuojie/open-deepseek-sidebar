@@ -1,0 +1,9 @@
+{
+  "name": "open-deepseek-sidebar",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Open the official DeepSeek chat in the browser side panel, window, or tab, with one-click page context.",
+  "scripts": {
+    "test": "node --test \"test/**/*.test.js\""
+  }
+}
