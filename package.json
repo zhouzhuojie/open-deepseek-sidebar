@@ -5,6 +5,7 @@
   "license": "MIT",
   "description": "Open the official DeepSeek chat in the browser side panel, window, or tab, with one-click page context.",
   "scripts": {
-    "test": "node --test \"test/**/*.test.js\""
+    "test": "node --test \"test/**/*.test.js\"",
+    "package": "node scripts/package.mjs"
   }
 }

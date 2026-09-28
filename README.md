@@ -8,7 +8,7 @@
 [![Privacy: no tracking](https://img.shields.io/badge/privacy-no%20tracking%2C%20no%20backend-2ea44f)](PRIVACY_POLICY.md)
 [![License: MIT](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
 
-![Open DeepSeek Sidebar in action: a GitHub page on the left, with the DeepSeek side panel answering a question about it on the right.](assets/screenshots/side-panel.png)
+![Open DeepSeek Sidebar in action: a GitHub page on the left, with the DeepSeek side panel answering a question about it on the right.](docs/screenshots/side-panel.png)
 
 ---
 
@@ -158,6 +158,14 @@ npm test
 ```
 
 The tests cover the shared context/prompt helpers, the manifest contract, and source hygiene (no CJK, no stale branding, no removed popup).
+
+### Packaging for the Chrome Web Store
+
+```bash
+npm run package
+```
+
+This writes `dist/open-deepseek-sidebar-<version>.zip`, containing **only** the runtime files (`manifest.json`, `src/`, `rules/`, `assets/icons/`). Docs, tests, screenshots, and this README never enter the package, so a README image can't bloat the store submission. The script is dependency-free and cross-platform, and stamps the ZIP comment with the release version and short commit.
 
 ## License
 
