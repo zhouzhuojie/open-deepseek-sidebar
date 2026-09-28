@@ -18,8 +18,6 @@
     TOGGLE_SIDE_PANEL: "TOGGLE_SIDE_PANEL",
     SIDE_PANEL_CONTEXT: "SIDE_PANEL_CONTEXT",
     CLOSE_SIDE_PANEL: "CLOSE_SIDE_PANEL",
-    OPEN_DEEPSEEK_WINDOW: "OPEN_DEEPSEEK_WINDOW",
-    OPEN_DEEPSEEK_TAB: "OPEN_DEEPSEEK_TAB",
     OPEN_SHORTCUTS_PAGE: "OPEN_SHORTCUTS_PAGE",
     OPEN_OPTIONS_PAGE: "OPEN_OPTIONS_PAGE"
   });
@@ -27,9 +25,7 @@
   // Must stay in sync with the `commands` block in manifest.json.
   const COMMANDS = Object.freeze({
     TOGGLE_WITH_CONTEXT: "open-deepseek-side-panel",
-    TOGGLE_WITHOUT_CONTEXT: "toggle-side-panel-without-context",
-    OPEN_WINDOW: "open-deepseek-window",
-    OPEN_TAB: "open-deepseek-tab"
+    TOGGLE_WITHOUT_CONTEXT: "toggle-side-panel-without-context"
   });
 
   const CONTEXT_MENUS = Object.freeze({

@@ -146,63 +146,36 @@ test("the context-free command stores an empty prompt", async () => {
 });
 
 test("every declared command is routed to a handler", async () => {
-  const { events, calls, protocol } = loadBackground({
-    contexts: [],
-    tabs: [{ ...TAB, width: 1200, height: 800 }]
-  });
+  const { events, calls, protocol } = loadBackground({ contexts: [], tabs: [TAB] });
 
   assert.equal(events.command.listeners.length, 1);
+  assert.deepEqual(Object.values(protocol.COMMANDS).sort(), [
+    "open-deepseek-side-panel",
+    "toggle-side-panel-without-context"
+  ]);
 
   // Distinct windows so each toggle is treated as "closed -> open".
   events.command.emit(protocol.COMMANDS.TOGGLE_WITH_CONTEXT, { windowId: 5 });
   events.command.emit(protocol.COMMANDS.TOGGLE_WITHOUT_CONTEXT, { windowId: 6 });
   assert.equal(calls.sidePanelOpen.length, 2);
 
-  events.command.emit(protocol.COMMANDS.OPEN_WINDOW, { windowId: 5 });
   await settle();
   await settle();
-  assert.equal(calls.windowsCreate.length, 1);
-
-  events.command.emit(protocol.COMMANDS.OPEN_TAB, { windowId: 5 });
-  await settle();
-  await settle();
-  assert.equal(calls.tabsCreate.length, 1);
 });
 
-test("OPEN_DEEPSEEK_TAB prefills the active page URL", async () => {
-  const { events, calls, protocol } = loadBackground({
-    contexts: [],
-    tabs: [TAB]
-  });
+test("OPEN_SHORTCUTS_PAGE opens the browser shortcuts page", async () => {
+  const { events, calls, protocol } = loadBackground({ contexts: [], tabs: [TAB] });
 
   const response = await callMessageHandler(
     events,
-    { type: protocol.MESSAGES.OPEN_DEEPSEEK_TAB, withContext: true },
-    { tab: { windowId: 5 } }
+    { type: protocol.MESSAGES.OPEN_SHORTCUTS_PAGE },
+    {}
   );
   await settle();
 
   assert.equal(calls.tabsCreate.length, 1);
-  const [created] = calls.tabsCreate;
-  assert.match(created.url, /^https:\/\/chat\.deepseek\.com\/a\/chat\?q=/);
-  assert.equal(created.active, true);
+  assert.equal(calls.tabsCreate[0].url, "chrome://extensions/shortcuts");
   assert.equal(response.ok, true);
-});
-
-test("OPEN_DEEPSEEK_TAB without context opens the bare DeepSeek URL", async () => {
-  const { events, calls, protocol } = loadBackground({
-    contexts: [],
-    tabs: [TAB]
-  });
-
-  await callMessageHandler(
-    events,
-    { type: protocol.MESSAGES.OPEN_DEEPSEEK_TAB, withContext: false },
-    { tab: { windowId: 5 } }
-  );
-  await settle();
-
-  assert.equal(calls.tabsCreate[0].url, "https://chat.deepseek.com/");
 });
 
 test("install clears any legacy popup and registers the action menus", () => {

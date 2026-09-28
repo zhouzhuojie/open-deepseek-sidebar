@@ -4,28 +4,12 @@ const { MESSAGES, COMMANDS } = globalThis.DeepSeekProtocol;
 // chrome.commands.getAll() so there is only one source of truth.
 const COMMAND_ORDER = [
   COMMANDS.TOGGLE_WITH_CONTEXT,
-  COMMANDS.TOGGLE_WITHOUT_CONTEXT,
-  COMMANDS.OPEN_WINDOW,
-  COMMANDS.OPEN_TAB
+  COMMANDS.TOGGLE_WITHOUT_CONTEXT
 ];
 
 document.getElementById("toggleSidePanel").addEventListener("click", () => {
   chrome.runtime.sendMessage({
     type: MESSAGES.TOGGLE_SIDE_PANEL,
-    withContext: true
-  });
-});
-
-document.getElementById("openWindow").addEventListener("click", () => {
-  chrome.runtime.sendMessage({
-    type: MESSAGES.OPEN_DEEPSEEK_WINDOW,
-    withContext: true
-  });
-});
-
-document.getElementById("openTab").addEventListener("click", () => {
-  chrome.runtime.sendMessage({
-    type: MESSAGES.OPEN_DEEPSEEK_TAB,
     withContext: true
   });
 });

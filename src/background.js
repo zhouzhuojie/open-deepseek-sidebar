@@ -1,12 +1,8 @@
 importScripts("protocol.js", "context.js");
 
 const { MESSAGES, COMMANDS, CONTEXT_MENUS } = globalThis.DeepSeekProtocol;
-const {
-  captureActiveTabContext,
-  buildPrompt,
-  buildDeepSeekUrl,
-  storeSidePanelContext
-} = globalThis.DeepSeekContext;
+const { captureActiveTabContext, buildPrompt, storeSidePanelContext } =
+  globalThis.DeepSeekContext;
 
 /* ------------------------------------------------------------------ *
  * Lifecycle
@@ -36,9 +32,7 @@ chrome.action.onClicked.addListener((tab) => {
 
 const COMMAND_HANDLERS = {
   [COMMANDS.TOGGLE_WITH_CONTEXT]: (tab) => toggleSidePanel(tab, true),
-  [COMMANDS.TOGGLE_WITHOUT_CONTEXT]: (tab) => toggleSidePanel(tab, false),
-  [COMMANDS.OPEN_WINDOW]: (tab) => runCommand(() => openDeepSeekWindow(tab, true)),
-  [COMMANDS.OPEN_TAB]: (tab) => runCommand(() => openDeepSeekTab(tab, true))
+  [COMMANDS.TOGGLE_WITHOUT_CONTEXT]: (tab) => toggleSidePanel(tab, false)
 };
 
 chrome.commands.onCommand.addListener((command, tab) => {
@@ -51,7 +45,7 @@ chrome.contextMenus.onClicked.addListener((info, tab) => {
   }
 
   if (info.menuItemId === CONTEXT_MENUS.OPEN_SHORTCUTS_PAGE) {
-    runCommand(openShortcutsPage);
+    openShortcutsPage().catch(() => {});
   }
 
   if (info.menuItemId === CONTEXT_MENUS.OPEN_OPTIONS_PAGE) {
@@ -65,14 +59,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
       toggleSidePanel(sender.tab, message.withContext !== false);
       sendResponse({ ok: true });
       return false;
-
-    case MESSAGES.OPEN_DEEPSEEK_WINDOW:
-      respond(sendResponse, openDeepSeekWindow(sender.tab, message.withContext !== false));
-      return true;
-
-    case MESSAGES.OPEN_DEEPSEEK_TAB:
-      respond(sendResponse, openDeepSeekTab(sender.tab, message.withContext !== false));
-      return true;
 
     case MESSAGES.OPEN_SHORTCUTS_PAGE:
       respond(sendResponse, openShortcutsPage());
@@ -260,7 +246,7 @@ async function attachSidePanelContext(windowId, withContext) {
 }
 
 /* ------------------------------------------------------------------ *
- * Window / tab targets
+ * Context
  * ------------------------------------------------------------------ */
 
 async function getContextPrompt(windowId, withContext) {
@@ -269,50 +255,6 @@ async function getContextPrompt(windowId, withContext) {
   return { prompt: buildPrompt(context), context };
 }
 
-async function openDeepSeekWindow(tab, withContext) {
-  const { prompt } = await getContextPrompt(tab?.windowId, withContext);
-  const viewport = await getViewportSize();
-  const width = Math.min(980, Math.max(720, Math.round(viewport.width * 0.42)));
-  const height = Math.min(960, Math.max(700, Math.round(viewport.height * 0.86)));
-
-  return chrome.windows.create({
-    url: buildDeepSeekUrl(prompt),
-    type: "popup",
-    left: Math.max(0, viewport.width - width - 48),
-    top: 48,
-    width,
-    height,
-    focused: true
-  });
-}
-
-async function openDeepSeekTab(tab, withContext) {
-  const { prompt } = await getContextPrompt(tab?.windowId, withContext);
-  return chrome.tabs.create({ url: buildDeepSeekUrl(prompt), active: true });
-}
-
 async function openShortcutsPage() {
   return chrome.tabs.create({ url: "chrome://extensions/shortcuts", active: true });
-}
-
-/**
- * Best-effort size of the area a popup should fit in. Uses the active tab's
- * viewport as a proxy, falling back to a conservative 1440x900.
- */
-async function getViewportSize() {
-  try {
-    const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (tab?.width && tab?.height) {
-      return { width: tab.width, height: tab.height };
-    }
-  } catch {
-    // Use the default size below.
-  }
-
-  return { width: 1440, height: 900 };
-}
-
-/** Run a fire-and-forget command, falling back to opening a tab. */
-function runCommand(action) {
-  action().catch(() => openDeepSeekTab(undefined, true).catch(() => {}));
 }

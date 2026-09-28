@@ -2,7 +2,7 @@
 
 Last updated: September 28, 2026
 
-Open DeepSeek Sidebar ("the extension") is a browser extension that opens the official DeepSeek chat website (`chat.deepseek.com`) in the browser's side panel, a standalone window, or a tab.
+Open DeepSeek Sidebar ("the extension") is a browser extension that opens the official DeepSeek chat website (`chat.deepseek.com`) in the browser's side panel.
 
 This policy explains exactly what the extension does and does not do with your data.
 
@@ -47,18 +47,20 @@ When you use the optional page context, the URL you are on is submitted to DeepS
 
 ## DeepSeek website access
 
-The extension loads the official DeepSeek website (`https://chat.deepseek.com/`) in the side panel, a window, or a tab. Login state, conversations, and cookies are managed by DeepSeek and your browser. The extension does not access or store them.
+The extension loads the official DeepSeek website (`https://chat.deepseek.com/`) in the side panel. Login state, conversations, and cookies are managed by DeepSeek and your browser. The extension does not access or store them.
 
 ## Permissions
 
 The extension uses the following browser permissions:
 
 - `sidePanel`: to display the official DeepSeek website in the browser side panel.
-- `tabs`: to read the active tab's URL for page context, to open DeepSeek in a browser tab, and to open the browser's keyboard-shortcut settings page.
+- `activeTab`: to read the URL of the active tab, and only at the moment you invoke the extension (toolbar click, keyboard shortcut, or context menu). It grants no access to any other tab and no persistent access to any site.
 - `storage`: to pass the page URL to the side panel using in-memory session storage only.
 - `contextMenus`: to add entries to the extension's own toolbar-icon right-click menu.
-- `declarativeNetRequest`: to modify response headers for DeepSeek sub-frames only, so the official DeepSeek website can be displayed inside the side panel iframe. Top-level navigations to DeepSeek are left untouched.
-- Host permissions for DeepSeek domains (`https://deepseek.com/*`, `https://*.deepseek.com/*`): to allow the side panel iframe to load the official DeepSeek website and to prefill the DeepSeek composer. No other websites are accessed.
+- `declarativeNetRequestWithHostAccess`: to modify response headers for DeepSeek sub-frames only, so the official DeepSeek website can be displayed inside the side panel iframe. Top-level navigations to DeepSeek are left untouched.
+- Host permission for DeepSeek domains (`https://*.deepseek.com/*`): to allow the side panel iframe to load the official DeepSeek website. No other websites are accessed.
+
+None of these permissions produce an install-time warning message.
 
 ## Remote code
 

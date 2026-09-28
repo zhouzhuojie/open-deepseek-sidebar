@@ -53,20 +53,6 @@ document.getElementById("reload").addEventListener("click", () => {
   applyPrompt(lastPrompt, { force: true });
 });
 
-document.getElementById("openWindow").addEventListener("click", () => {
-  chrome.runtime.sendMessage({
-    type: MESSAGES.OPEN_DEEPSEEK_WINDOW,
-    withContext: true
-  });
-});
-
-document.getElementById("openTab").addEventListener("click", () => {
-  chrome.runtime.sendMessage({
-    type: MESSAGES.OPEN_DEEPSEEK_TAB,
-    withContext: true
-  });
-});
-
 /**
  * Point the iframe at DeepSeek with the given prompt. Idempotent so that the
  * stored context and an in-flight SIDE_PANEL_CONTEXT message cannot trigger a

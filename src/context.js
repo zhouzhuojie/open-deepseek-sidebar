@@ -25,9 +25,10 @@
    * Context of the active tab in the given window (or the current window).
    * Never throws: returns null when the tab has no usable URL.
    *
-   * Note: the query runs after the side panel has opened, so the extension
-   * relies on the broad `tabs` permission for `tab.url`; `activeTab` is not
-   * reliably granted at that point.
+   * The extension declares `activeTab`, not `tabs`, so `chrome.tabs.query`
+   * only populates `tab.url` for a tab the user just invoked the extension on
+   * (toolbar click, keyboard shortcut or context menu). When the grant is not
+   * present this returns null and the panel simply opens without context.
    */
   async function captureActiveTabContext(windowId) {
     let tab;
