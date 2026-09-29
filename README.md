@@ -1,3 +1,7 @@
+<p align="center">
+  <img src="docs/brand/svg/logo-lockup.svg" alt="Open DeepSeek Sidebar" width="360">
+</p>
+
 # Open DeepSeek Sidebar
 
 > Put DeepSeek one click away. A fast, privacy-friendly Chromium extension that opens the official DeepSeek chat in a native browser side panel — with the page you're reading automatically attached.
@@ -85,6 +89,8 @@ src/deepseek-consent.js  Content script: cookie/consent banner dismissal
 src/deepseek-prefill.js  Content script: composer prefill
 src/sidepanel.*          Side panel shell that hosts the DeepSeek iframe
 src/options.*            Options / help page
+docs/brand/              Brand kit: mark, lockup, and raster exports (never packaged)
+docs/screenshots/        README screenshots (never packaged)
 ```
 
 ## Privacy

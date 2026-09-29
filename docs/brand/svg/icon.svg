@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 128 128" width="128" height="128" role="img" aria-label="Open DeepSeek Sidebar">
+  <rect width="128" height="128" rx="28" fill="#4D6BFE"/>
+  <g fill="#FFFFFF">
+    <rect x="34" y="28" width="26" height="72" rx="9"/>
+    <!-- overlap the panel so the mark is one connected shape -->
+    <path d="M58 64 C67 50 78 38 96 32 C86 48 80 58 73 64 C80 70 86 80 96 96 C78 90 67 78 58 64 Z"/>
+  </g>
+</svg>
