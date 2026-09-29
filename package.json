@@ -1,6 +1,6 @@
 {
   "name": "open-deepseek-sidebar",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "private": true,
   "license": "MIT",
   "description": "Open the official DeepSeek chat in the browser side panel, window, or tab, with one-click page context.",
