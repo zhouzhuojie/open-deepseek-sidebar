@@ -86,24 +86,38 @@ function respond(sendResponse, promise) {
   );
 }
 
+// `onInstalled` and `onStartup` can both fire during the same service worker
+// lifetime, and each used to run its own removeAll -> create sequence. The two
+// removeAll calls are queued before either create runs, so the second create
+// trips "Cannot create item with duplicate id ...". Serialize registration
+// behind a single in-flight promise so only one sequence runs at a time.
+let actionContextMenuRegistration = null;
+
+const ACTION_CONTEXT_MENUS = [
+  { id: CONTEXT_MENUS.TOGGLE_SIDE_PANEL, title: "Toggle DeepSeek Side Panel" },
+  { id: CONTEXT_MENUS.OPEN_SHORTCUTS_PAGE, title: "Configure Shortcuts" },
+  { id: CONTEXT_MENUS.OPEN_OPTIONS_PAGE, title: "Extension Options" }
+];
+
 function createActionContextMenu() {
-  chrome.contextMenus.removeAll(() => {
-    chrome.contextMenus.create({
-      id: CONTEXT_MENUS.TOGGLE_SIDE_PANEL,
-      title: "Toggle DeepSeek Side Panel",
-      contexts: ["action"]
-    });
-    chrome.contextMenus.create({
-      id: CONTEXT_MENUS.OPEN_SHORTCUTS_PAGE,
-      title: "Configure Shortcuts",
-      contexts: ["action"]
-    });
-    chrome.contextMenus.create({
-      id: CONTEXT_MENUS.OPEN_OPTIONS_PAGE,
-      title: "Extension Options",
-      contexts: ["action"]
+  if (actionContextMenuRegistration) return actionContextMenuRegistration;
+
+  actionContextMenuRegistration = new Promise((resolve) => {
+    chrome.contextMenus.removeAll(() => {
+      // Read lastError so a failed removeAll never surfaces unchecked.
+      void chrome.runtime.lastError;
+      for (const { id, title } of ACTION_CONTEXT_MENUS) {
+        chrome.contextMenus.create({ id, title, contexts: ["action"] }, () => {
+          // A create can still fail (e.g. a concurrent registration); read
+          // lastError so Chrome does not report it as an unchecked error.
+          void chrome.runtime.lastError;
+        });
+      }
+      resolve();
     });
   });
+
+  return actionContextMenuRegistration;
 }
 
 /* ------------------------------------------------------------------ *

@@ -190,3 +190,18 @@ test("install clears any legacy popup and registers the action menus", () => {
     Object.values(protocol.CONTEXT_MENUS).sort()
   );
 });
+
+test("install and startup never register duplicate context menu ids", () => {
+  const { events, calls, protocol } = loadBackground();
+
+  // Both lifecycle events can fire during the same service worker lifetime.
+  // In Chrome the two removeAll/create sequences interleave and the second
+  // create produces "Cannot create item with duplicate id ...". Registration
+  // must be serialized so each id is created once.
+  events.installed.emit();
+  events.startup.emit();
+
+  const ids = calls.contextMenusCreate.map((menu) => menu.id);
+  assert.deepEqual(ids, Object.values(protocol.CONTEXT_MENUS));
+  assert.equal(new Set(ids).size, ids.length, "menu ids must be unique");
+});
